@@ -1,0 +1,12 @@
+{
+  "extends": ["airbnb", "prettier", "prettier/react"],
+  "plugins": ["react", "prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "max-len": ["error", 80],
+    "import/no-extraneous-dependencies": 0
+  },
+  "env": {
+    "browser": true
+  }
+}
