@@ -4,7 +4,8 @@
   "rules": {
     "prettier/prettier": "error",
     "max-len": ["error", 80],
-    "import/no-extraneous-dependencies": 0
+    "import/no-extraneous-dependencies": 0,
+    "react/forbid-prop-types": ["error", { "forbid": ["any"] }]
   },
   "env": {
     "browser": true
