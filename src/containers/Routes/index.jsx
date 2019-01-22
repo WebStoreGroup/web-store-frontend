@@ -7,6 +7,8 @@ import history from '../../auth/history';
 import Home from '../Home';
 import Loading from '../Loading';
 
+import Navbar from '../../components/Navbar';
+
 const auth = new Auth();
 
 const handleAuthentication = nextState => {
@@ -18,7 +20,6 @@ const handleAuthentication = nextState => {
 const Routes = () => (
   <Router history={history}>
     <Switch>
-      <Route exact path="/" render={props => <Home auth={auth} {...props} />} />
       <Route
         path="/callback"
         render={props => {
@@ -26,6 +27,9 @@ const Routes = () => (
           return <Loading {...props} />;
         }}
       />
+      <Navbar auth={auth} />
+      <Route exact path="/" render={props => <Home auth={auth} {...props} />} />
+      <Route render={() => <p>Not Found</p>} />
     </Switch>
   </Router>
 );
