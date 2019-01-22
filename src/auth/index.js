@@ -18,14 +18,20 @@ export default class Auth {
 
     // bindings, consider to change to class properties arrow function syntax,
     // probably need to configure babel and eslint to support the syntax
+
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.handleAuthentication = this.handleAuthentication.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.getAccessToken = this.getAccessToken.bind(this);
+    this.getExpiryDate = this.getExpiryDate.bind(this);
     this.getIdToken = this.getIdToken.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.renewSession = this.renewSession.bind(this);
+    this.scheduleRenewal = this.scheduleRenewal.bind(this);
+    this.setSession = this.setSession.bind(this);
+
+    this.scheduleRenewal();
   }
 
   getAccessToken() {
@@ -76,6 +82,7 @@ export default class Auth {
 
     // Remove isLoggedIn flag from localStorage
     localStorage.removeItem('isLoggedIn');
+    clearTimeout(this.tokenRenewalTimeout);
 
     // navigate to the home route
     history.replace('/');
@@ -105,7 +112,21 @@ export default class Auth {
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
+    this.scheduleRenewal();
     // navigate to the home route
     history.replace('/');
+  }
+
+  scheduleRenewal() {
+    const timeout = this.expiresAt - Date.now();
+    if (timeout > 0) {
+      this.tokenRenewalTimeout = setTimeout(() => {
+        this.renewSession();
+      }, timeout);
+    }
+  }
+
+  getExpiryDate() {
+    return JSON.stringify(new Date(this.expiresAt));
   }
 }
