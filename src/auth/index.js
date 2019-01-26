@@ -18,14 +18,24 @@ export default class Auth {
 
     // bindings, consider to change to class properties arrow function syntax,
     // probably need to configure babel and eslint to support the syntax
+
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.handleAuthentication = this.handleAuthentication.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
     this.getAccessToken = this.getAccessToken.bind(this);
+    this.getExpiryDate = this.getExpiryDate.bind(this);
     this.getIdToken = this.getIdToken.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.renewSession = this.renewSession.bind(this);
+    this.scheduleRenewal = this.scheduleRenewal.bind(this);
+    this.setSession = this.setSession.bind(this);
+
+    this.accessToken = localStorage.getItem('accessToken') || null;
+    this.idToken = localStorage.getItem('idToken') || null;
+    this.expiresAt = localStorage.getItem('expiresAt') || null;
+
+    this.scheduleRenewal();
   }
 
   getAccessToken() {
@@ -74,38 +84,64 @@ export default class Auth {
     this.expiresAt = 0;
     this.userProfile = null;
 
-    // Remove isLoggedIn flag from localStorage
+    // clear localStorage
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('expiresAt');
+
+    clearTimeout(this.tokenRenewalTimeout);
 
     // navigate to the home route
     history.replace('/');
   }
 
   renewSession() {
-    this.auth0.checkSession({}, (err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-      } else if (err) {
-        this.logout();
-        console.log(err);
-        alert(
-          `Could not get a new token (${err.error}: ${err.error_description}).`,
-        );
-      }
-    });
+    this.auth0.checkSession(
+      { redirectUri: 'http://localhost:3000/' },
+      (err, authResult) => {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          this.setSession(authResult);
+        } else if (err) {
+          this.logout();
+          console.log(err);
+          alert(
+            `Could not get a new token (${err.error}: ${
+              err.error_description
+            }).`,
+          );
+        }
+      },
+    );
   }
 
   setSession(authResult) {
-    // Set isLoggedIn flag in localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-
     // Set the time that the access token will expire at
     const expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     this.accessToken = authResult.accessToken;
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('accessToken', this.accessToken);
+    localStorage.setItem('idToken', this.idToken);
+    localStorage.setItem('expiresAt', expiresAt);
+
+    this.scheduleRenewal();
     // navigate to the home route
     history.replace('/');
+  }
+
+  scheduleRenewal() {
+    const timeout = this.expiresAt - Date.now();
+    if (timeout > 0) {
+      this.tokenRenewalTimeout = setTimeout(() => {
+        this.renewSession();
+      }, timeout);
+    }
+  }
+
+  getExpiryDate() {
+    return JSON.stringify(new Date(this.expiresAt));
   }
 }
