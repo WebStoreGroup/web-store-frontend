@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Button } from 'semantic-ui-react';
+
 import Profile from '../../components/Profile';
 
 // https://auth0.com/docs/quickstart/spa/react/01-login#provide-a-login-control
@@ -54,19 +56,19 @@ class Home extends React.Component {
       <div>
         <p>Welcome to the homepage.</p>
         {!isAuthenticated() && (
-          <button type="button" onClick={this.login}>
+          <Button type="button" onClick={this.login}>
             Login
-          </button>
+          </Button>
         )}
         {isAuthenticated() && (
           <div>
-            <button type="button" onClick={this.fetchApi}>
+            <Button type="button" onClick={this.fetchApi}>
               Call API
-            </button>
+            </Button>
             <Profile auth={auth} />
-            <button type="button" onClick={this.logout}>
+            <Button type="button" onClick={this.logout}>
               Logout
-            </button>
+            </Button>
           </div>
         )}
       </div>

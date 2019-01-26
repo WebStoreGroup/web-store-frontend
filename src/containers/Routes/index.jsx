@@ -13,15 +13,21 @@ const auth = new Auth();
 
 const Routes = () => (
   <Router history={history}>
-    <Switch>
-      <Route
-        path="/callback"
-        render={props => <Loading nextState={props} auth={auth} />}
-      />
+    <div>
       <Navbar auth={auth} />
-      <Route exact path="/" render={props => <Home auth={auth} {...props} />} />
-      <Route render={() => <p>Not Found</p>} />
-    </Switch>
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={props => <Home auth={auth} {...props} />}
+        />
+        <Route
+          path="/callback"
+          render={props => <Loading nextState={props} auth={auth} />}
+        />
+        <Route render={() => <p>Not Found</p>} />
+      </Switch>
+    </div>
   </Router>
 );
 
