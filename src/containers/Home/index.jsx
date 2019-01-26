@@ -10,7 +10,6 @@ class Home extends React.Component {
     super(props);
 
     // bindings
-    this.goTo = this.goTo.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.fetchApi = this.fetchApi.bind(this);
@@ -24,11 +23,6 @@ class Home extends React.Component {
     if (localStorage.getItem('isLoggedIn') === 'true') {
       renewSession();
     }
-  }
-
-  goTo(route) {
-    const { history } = this.props;
-    history.replace(`/${route}`);
   }
 
   login() {
@@ -82,7 +76,6 @@ class Home extends React.Component {
 
 Home.propTypes = {
   auth: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default Home;

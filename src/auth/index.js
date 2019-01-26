@@ -31,6 +31,10 @@ export default class Auth {
     this.scheduleRenewal = this.scheduleRenewal.bind(this);
     this.setSession = this.setSession.bind(this);
 
+    this.accessToken = localStorage.getItem('accessToken') || null;
+    this.idToken = localStorage.getItem('idToken') || null;
+    this.expiresAt = localStorage.getItem('expiresAt') || null;
+
     this.scheduleRenewal();
   }
 
@@ -80,8 +84,12 @@ export default class Auth {
     this.expiresAt = 0;
     this.userProfile = null;
 
-    // Remove isLoggedIn flag from localStorage
+    // clear localStorage
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('expiresAt');
+
     clearTimeout(this.tokenRenewalTimeout);
 
     // navigate to the home route
@@ -89,28 +97,35 @@ export default class Auth {
   }
 
   renewSession() {
-    this.auth0.checkSession({}, (err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-      } else if (err) {
-        this.logout();
-        console.log(err);
-        alert(
-          `Could not get a new token (${err.error}: ${err.error_description}).`,
-        );
-      }
-    });
+    this.auth0.checkSession(
+      { redirectUri: 'http://localhost:3000/' },
+      (err, authResult) => {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          this.setSession(authResult);
+        } else if (err) {
+          this.logout();
+          console.log(err);
+          alert(
+            `Could not get a new token (${err.error}: ${
+              err.error_description
+            }).`,
+          );
+        }
+      },
+    );
   }
 
   setSession(authResult) {
-    // Set isLoggedIn flag in localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-
     // Set the time that the access token will expire at
     const expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
     this.accessToken = authResult.accessToken;
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
+
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('accessToken', this.accessToken);
+    localStorage.setItem('idToken', this.idToken);
+    localStorage.setItem('expiresAt', expiresAt);
 
     this.scheduleRenewal();
     // navigate to the home route
