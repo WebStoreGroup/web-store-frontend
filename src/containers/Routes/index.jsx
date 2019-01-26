@@ -11,21 +11,12 @@ import Navbar from '../../components/Navbar';
 
 const auth = new Auth();
 
-const handleAuthentication = nextState => {
-  if (/access_token|id_token|error/.test(nextState.location.hash)) {
-    auth.handleAuthentication();
-  }
-};
-
 const Routes = () => (
   <Router history={history}>
     <Switch>
       <Route
         path="/callback"
-        render={props => {
-          handleAuthentication(props);
-          return <Loading {...props} />;
-        }}
+        render={props => <Loading nextState={props} auth={auth} />}
       />
       <Navbar auth={auth} />
       <Route exact path="/" render={props => <Home auth={auth} {...props} />} />
