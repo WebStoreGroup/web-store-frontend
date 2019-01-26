@@ -1,3 +1,9 @@
 /*******************************
      User Global Variables
 *******************************/
+
+@importGoogleFonts : false;
+@fontName          : 'Avenir LT Std 35 Light';
+
+@headerFont        : 'Avenir LT Std 35 Light', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+@pageFont          : @fontName, 'Helvetica Neue', Arial, Helvetica, sans-serif;

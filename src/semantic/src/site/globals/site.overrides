@@ -1,3 +1,19 @@
 /*******************************
          Site Overrides
 *******************************/
+
+@font-face {
+  font-family: 'Avenir LT Std 35 Light';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Avenir LT Std 35 Light'),
+    url('themes/basic/assets/fonts/AvenirLTStd-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Avenir LT Std 65 Medium';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Avenir LT Std 65 Medium'),
+    url('themes/basic/assets/fonts/AvenirLTStd-Medium.woff') format('woff');
+}
